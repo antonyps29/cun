@@ -1,23 +1,25 @@
-# 📊 Predicción de Ventas y Carga de Datos a PostgreSQL y Supabase
+# Predicción de Ventas y Carga de Datos a PostgreSQL y Supabase
 
-Este proyecto implementa un pipeline automatizado de análisis de ventas que incluye generación de datos, entrenamiento de un modelo de predicción y carga a bases de datos. Ideal para pruebas técnicas, prácticas de ciencia de datos o despliegues en entornos de negocio controlados.
+Este proyecto implementa un pipeline automatizado de análisis de ventas que incluye generación de datos, entrenamiento de un modelo de predicción usando machine learning para series de tiempo y carga a bases de datos.
 
 ---
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 El pipeline está compuesto por tres scripts Python, cada uno con su respectivo archivo `.bat` para ejecución automatizada:
 
 1. **ETL (`ETL.py`)**
    - Genera datos sintéticos de ventas.
-   - Extrae datos de temperatura de Bogotá desde una API.
+   - Extrae datos de temperatura de Bogotá desde una API open-meteo.
    - Limpia nulos y outliers.
+   - Genera un archivo con la data limpiada
 
 2. **Modelo (`modelo.py`)**
-   - Entrena un modelo de series temporales con machine learning (skforecast).
+   -Carga la data limpiada 
+   - Entrena un modelo de series temporales con machine learning (skforecast) RandomForestregressor, aplica gridsearch para optimizacion de hiperparametros.
    - Predice ventas y guarda resultados en `data_predicha.csv`.
 
-3. **Carga (`load_db.py`)**
+4. **Carga (`load_db.py`)**
    - Carga los datos a PostgreSQL local.
    - Exporta y sincroniza la tabla con Supabase.
    - Calcula RMSE por categoría.
@@ -26,15 +28,15 @@ Cada script tiene un archivo `.bat` asociado que genera un log (`.txt`) del proc
 
 ---
 
-## 🧭 Instrucciones de Uso
+##  Instrucciones de Uso
 
-### 1. 📌 Requisitos Previos
+### 1. Requisitos Previos
 
 - Tener instalado **Anaconda** o **Miniconda**.
 - Tener instalado **PostgreSQL local** (puerto por defecto 5433).
 - Tener cuenta y proyecto en **Supabase** con base de datos PostgreSQL activa.
 
-### 2. ⚙️ Instalación y Entorno
+### 2. Instalación y Entorno
 
 1. Crea un nuevo entorno de Conda:
 
@@ -48,18 +50,15 @@ conda activate cun_env
 ```bash
 pip install numpy pandas scikit-learn skforecast==0.12.0 jupyter sqlalchemy psycopg2-binary
 ```
-
-3. (Opcional) Instala Jupyter Notebook:
-
 ```bash
 pip install notebook
 ```
 
 ---
 
-## 🚀 Ejecución Paso a Paso
+##  Ejecución Paso a Paso
 
-### ✅ 1. Ejecutar ETL
+### 1. Ejecutar ETL
 
 ```bash
 etl.bat
@@ -68,8 +67,9 @@ etl.bat
 - Ejecuta `ETL.py`
 - Genera y limpia los datos
 - Log generado: `etl_log.txt`
+- Genera los archivos data_modelo (data para entrenar modelo de sales predictions) y data_final (data con los demas variables a cargar en postgress) 
 
-### 📈 2. Ejecutar el Modelo
+### 2. Ejecutar el Modelo
 
 ```bash
 modelo.bat
@@ -91,6 +91,7 @@ load_db.bat
 - Crea copia en Supabase
 - Calcula el RMSE por categoría
 - Log generado: `load_db_log.txt`
+- sales_categoria.csv 
 
 ---
 
@@ -108,7 +109,7 @@ Reemplaza `TU_USUARIO` con tu nombre de usuario real en Windows y verifica que `
 
 ---
 
-## 📝 Logs
+## Logs
 
 Cada `.bat` genera un archivo `.log` o `.txt` donde se guarda el detalle del proceso y los errores:
 
@@ -127,14 +128,14 @@ Cada `.bat` genera un archivo `.log` o `.txt` donde se guarda el detalle del pro
 
 ## 🕒 Automatización Diaria (Programador de Tareas de Windows)
 
-Puedes ejecutar automáticamente el pipeline todos los días a las 8:00 AM:
+Puedes ejecutar automáticamente el pipeline todos los días a la hora que desees:
 
 ### 1. Abrir el Programador de Tareas:
 - Buscar "Programador de tareas" en el menú de Windows.
 
 ### 2. Crear una tarea básica:
 - **Nombre:** `Ejecutar_Pipeline_Ventas`
-- **Desencadenador:** Todos los días a las 8:00 AM
+- **Desencadenador:** Todos los días a las x:xx PM
 - **Acción:** Iniciar un programa
 - **Programa/script:** 
 ```bash
@@ -149,7 +150,7 @@ cmd.exe
 
 ---
 
-## 📦 Dependencias
+##  Dependencias
 
 - `pandas`
 - `numpy`
@@ -161,7 +162,7 @@ cmd.exe
 
 ---
 
-## 🧪 Validación
+##  Validación
 
 - Revisa las tablas generadas en PostgreSQL y Supabase.
 - Asegúrate de que el archivo `data_predicha.csv` contenga las predicciones.
@@ -171,4 +172,4 @@ cmd.exe
 
 ## 📬 Contacto
 
-Si tienes preguntas, sugerencias o deseas colaborar, no dudes en crear un issue o contactarme directamente.
+Si tienes preguntas, sugerencias o deseas colaborar, no dudes en crear un issue o contactarme directamente luiscarlosps93@gmail.com.
